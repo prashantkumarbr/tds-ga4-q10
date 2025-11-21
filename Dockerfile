@@ -1,28 +1,22 @@
-# Use latest Playwright image with Python 3.12
-FROM mcr.microsoft.com/playwright/python:v1.52.0-jammy
+# Use latest Playwright Python image (includes browsers + playwright)
+FROM mcr.microsoft.com/playwright/python:latest
 
 # Set working directory
 WORKDIR /app
 
-# Set environment variables
+# Environment settings
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Copy requirements first (for caching)
+# Copy and install requirements
 COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Remove playwright from requirements since it's already in base image
-RUN sed -i '/playwright/d' requirements.txt
-
-# Upgrade pip and install dependencies
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
-
-# Copy the rest of the application
+# Copy app files
 COPY . .
 
-# Expose the port
+# Expose port for Render
 EXPOSE 10000
 
-# Use PORT environment variable (Render sets this automatically)
-CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-10000}
+# Run using uvicorn
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "10000"]
