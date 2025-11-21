@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright/python:v1.56.0-jammy
+FROM mcr.microsoft.com/playwright/python:1.56-jammy
 
 WORKDIR /app
 
